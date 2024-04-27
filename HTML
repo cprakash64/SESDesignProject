@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Simulation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0c111b; /* Dark blue background */
+            color: #ffffff; /* White text color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #1a1f2b; /* Darker container background */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1); /* Soft white shadow */
+            width: 90%;
+            max-width: 600px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        h1 {
+            color: #5C67F2; /* Vivid blue heading color */
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 36px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: fadeIn 1s ease;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            color: #ffffff; /* White label color */
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        select, input {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 1px solid #5C67F2; /* Vivid blue border */
+            background-color: #333e4e; /* Darker background */
+            color: #ffffff; /* White text color */
+            font-size: 18px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4348E3; /* Darker vivid blue border on focus */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4348E3; /* Darker vivid blue background for buttons */
+            color: #ffffff; /* White text color */
+            border: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #5C67F2; /* Vivid blue background for buttons on hover */
+        }
+
+        #output {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #ffffff; /* White text color */
+            animation: fadeIn 1s ease;
+        }
+
+        #output span {
+            color: #5C67F2; /* Vivid blue color for output span */
+        }
+
+        /* Custom Styles */
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background-size: cover;
+            background-repeat: no-repeat;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            z-index: -1;
+            filter: brightness(0.7); /* Adjust brightness of background image */
+            animation: waveAnimation 10s infinite alternate linear; /* Wave animation */
+        }
+
+        @keyframes waveAnimation {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Energy Simulation Tool</h1>
+        <div>
+            <label for="energySource">Select Energy Source:</label>
+            <select id="energySource" onchange="changeColor()">
+                <option value="solar">Solar</option>
+                <option value="wind">Wind</option>
+                <option value="hydro">Hydroelectric</option>
+            </select>
+        </div>
+        <div>
+            <label for="efficiency">Efficiency (%):</label>
+            <input type="number" id="efficiency" value="100" oninput="calculateOutput()">
+        </div>
+        <button onclick="calculateOutput()">Calculate Output</button>
+        <button onclick="resetForm()">Reset</button>
+        <div id="output">Estimated Energy Output: <span>0</span> Watts</div>
+        <div id="chartContainer"></div>
+        <div class="wave"></div> <!-- Energy-themed background wave -->
+    </div>
+
+    <script>
+    function calculateOutput() {
+        const source = document.getElementById('energySource').value;
+        const efficiency = document.getElementById('efficiency').value;
+
+        let baseOutput;
+        switch (source) {
+            case 'solar':
+                baseOutput = 120; // Base output in watts
+                break;
+            case 'wind':
+                baseOutput = 300;
+                break;
+            case 'hydro':
+                baseOutput = 500;
+                break;
+            default:
+                baseOutput = 0;
+        }
+
+        const adjustedOutput = baseOutput * (efficiency / 100);
+        document.getElementById('output').innerHTML = `Estimated Energy Output: <span>${adjustedOutput}</span> Watts`;
+
+        // Change background image dynamically based on selected energy source
+        const waveElement = document.querySelector('.wave');
+        switch (source) {
+            case 'solar':
+                waveElement.style.backgroundImage = "url('https://images.unsplash.com/photo-1558980665-1e7856e15a09?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')";
+                break;
+            case 'wind':
+                waveElement.style.backgroundImage = "url('https://images.unsplash.com/photo-1568011805585-d714e8e87b3c?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350')";
+                break;
+            case 'hydro':
+                waveElement.style.backgroundImage = "url('https://images.unsplash.com/photo-1573821645222-72c8c0fb1161?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')";
+                break;
+            default:
+                // Default background image
+                waveElement.style.backgroundImage = "url('https://images.unsplash.com/photo-1611708831077-831b28d70c3b')";
+        }
+    }
+
+    function changeColor() {
+        const source = document.getElementById('energySource').value;
+        const outputText = document.getElementById('output');
+
+        switch (source) {
+            case 'solar':
+                outputText.style.color = '#FFD700'; // Gold color for solar
+                break;
+            case 'wind':
+                outputText.style.color = '#4682B4'; // Steel blue color for wind
+                break;
+            case 'hydro':
+                outputText.style.color = '#00FF00'; // Lime color for hydroelectric
+                break;
+            default:
+                outputText.style.color = '#ffffff'; // Default white color
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('energySource').value = 'solar';
+        document.getElementById('efficiency').value = 100;
+        document.getElementById('output').innerHTML = 'Estimated Energy Output: <span>0</span> Watts';
+        document.getElementById('output').style.color = '#ffffff'; // Reset text color to white
+    }
+</script>
+</body>
+</html>
